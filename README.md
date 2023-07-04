@@ -1,3 +1,7 @@
+# Rehike MrBeastify
+
+This is a small mod of Youtube MrBeastify that allows it to work on Rehike. Enjoy!
+
 # Youtube MrBeastify
 
 Enhance your browsing experience with MrBeastifier. Is your browser experience boring? Are you having trouble finding engaging click-baity videos? Fear no more. This extension adds famous youtuber MrBeast to every thumbnail.

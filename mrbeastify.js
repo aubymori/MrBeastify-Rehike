@@ -1,5 +1,4 @@
-const imagesPath = "images/";
-const images = [];
+const IMAGE_COUNT = 37;
 
 // Apply the overlay
 function applyOverlay(thumbnailElement, overlayImageUrl, flip) {
@@ -12,6 +11,7 @@ function applyOverlay(thumbnailElement, overlayImageUrl, flip) {
   overlayImage.style.width = "100%";
   overlayImage.style.height = "100%";
   overlayImage.style.zIndex = "0"; // Ensure overlay is on top
+  overlayImage.classList.add("mrbeast");
 
   if (flip) {
     overlayImage.style.transform = "scaleX(-1)"; // Flip the image horizontally
@@ -27,17 +27,18 @@ function applyOverlay(thumbnailElement, overlayImageUrl, flip) {
 
 // Looks for all thumbnails and applies overlay
 function applyOverlayToThumbnails() {
-  // Query all YouTube video thumbnails on the page that haven't been processed yet
-  // (ignores shorts thumbnails)
+  // Query all YouTube video thumbnails on the page that haven't been processed yet, and also ignores shorts thumbnails
   const elementQuery =
-    "ytd-thumbnail:not(.ytd-video-preview, .ytd-rich-grid-slim-media) a > yt-image > img.yt-core-image:not(.processed):not(.yt-core-attributed-string__image-element)";
+  `
+  .yt-lockup-video .yt-lockup-thumbnail .yt-thumb img:not(.processed):not(.mrbeast):not(.mouseover-img),
+  .related-list-item-compact-video .yt-uix-simple-thumb-wrap img:not(.processed):not(.mrbeast):not(.mouseover-img)
+  `;
   const thumbnailElements = document.querySelectorAll(elementQuery);
 
   // Apply overlay to each thumbnail
   thumbnailElements.forEach((thumbnailElement) => {
     // Apply overlay and add to processed thumbnails
     let loops = Math.random() > 0.001 ? 1 : 20; // Easter egg
-
     for (let i = 0; i < loops; i++) {
       // Get overlay image URL from your directory
       const overlayImageUrl = getRandomImageFromDirectory();
@@ -47,27 +48,14 @@ function applyOverlayToThumbnails() {
   });
 }
 
-function checkImageExistence(index = 1) { // Checks for all images in the images folder instead of using a preset array, making the extension infinitely scalable
-  const testedURL = chrome.runtime.getURL(`${imagesPath}${index}.png`);
-  fetch(testedURL).then(response => {
-    if (response.status === 200) {
-      // Image exists, add it to the images array
-      images.push(testedURL);
-      // Check the next image in the directory
-      checkImageExistence(index + 1);
-    }
-  }).catch(error => {
-    setInterval(applyOverlayToThumbnails, 100);
-    console.log("MrBeastify Loaded Successfully, " + (index - 1) + " images detected.");
-  });
-}
-
-
-checkImageExistence();
-
 
 // Get a random image URL from a directory
 function getRandomImageFromDirectory() {
-  const randomIndex = Math.floor(Math.random() * images.length);
-  return images[randomIndex];
+  let randomIndex = Math.floor(Math.random() * IMAGE_COUNT - 1) + 1;
+  if (randomIndex == 0) randomIndex = 1;
+  return chrome.runtime.getURL(`images/${randomIndex}.png`);
 }
+
+setInterval(applyOverlayToThumbnails, 100);
+
+console.log("MrBeastify Loaded Successfully");
